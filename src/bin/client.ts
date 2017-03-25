@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * Client implemetation for remote avrdude call
  *
@@ -13,23 +15,19 @@ const uri = 'mqtt://' + host;
 
 const client: mqtt.Client = mqtt.connect(uri);
 
-
 // take arguments from commandline
 let args = process.argv.slice(2);
 
-
 const mqttClient = new MqttClient(client);
 
-
 new Promise<any>((res, rej) =>{
+	console.log('Connecting to %s...', uri);
+
 	setTimeout(() => rej(new Error('Connection timeout')), 1000);
 	client.on('connect', () => res(args));
 }).then((args) => {
 	return mqttClient.execute(args);
 }).then((exitCode: number) => {
-
-	console.log('Exited after promise = %d', exitCode);
-
 	process.exitCode = exitCode;
 	client.end();
 

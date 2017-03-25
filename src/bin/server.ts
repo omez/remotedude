@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * Server executable for remotedude
  *
@@ -54,7 +55,7 @@ server.on('clientConnected', (client) => {
 			retain: false
 		}, client);
 	});
-	
+
 });
 
 server.on('clientDisconnected', (client) => {
