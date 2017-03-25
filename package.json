@@ -11,8 +11,8 @@
     "uuid": "^3.0.1"
   },
   "bin": {
-    "remotedude": "./bin/client.js",
-    "remotedude-server": "./bin/server.js"
+    "remotedude": "./dist/bin/client.js",
+    "remotedude-server": "./dist/bin/server.js"
   },
   "main": "server.js",
   "scripts": {

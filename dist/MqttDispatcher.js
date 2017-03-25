@@ -5,6 +5,7 @@ const fs = require("fs");
 exports.topicStdout = 'remotedude/stdout';
 exports.topicStderr = 'remotedude/stderr';
 exports.topicFile = 'remotedude/file';
+exports.topicFileAck = 'remotedude/fileack';
 exports.topicCommand = 'remotedude/command';
 exports.topicExit = 'remotedude/exit';
 class MqttDispatcher {
@@ -43,6 +44,7 @@ class MqttDispatcher {
         });
         this.files.push(filename);
         this.bindings[alias] = filename;
+        this.publisher(exports.topicFileAck, alias);
         console.log('[%s] Uploaded file alias=%s as path=%s', this.tag, alias, filename);
     }
     handleCommand(flags) {

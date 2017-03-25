@@ -10,6 +10,7 @@ import * as fs from 'fs';
 export const topicStdout = 'remotedude/stdout';
 export const topicStderr = 'remotedude/stderr';
 export const topicFile = 'remotedude/file';
+export const topicFileAck = 'remotedude/fileack';
 export const topicCommand = 'remotedude/command';
 export const topicExit = 'remotedude/exit';
 
@@ -80,6 +81,8 @@ export class MqttDispatcher implements MqttDispatcherInterface {
 
 		this.files.push(filename);
 		this.bindings[alias] = filename;
+
+		this.publisher(topicFileAck, alias);
 
 		console.log('[%s] Uploaded file alias=%s as path=%s', this.tag, alias, filename);
 	}

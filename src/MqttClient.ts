@@ -39,8 +39,14 @@ export class MqttClient {
 					if (!fs.existsSync(filename)) throw new Error(`File '${filename}' does not exists`);
 
 					// Handle file upload
-					this.client.publish(dispatcher.topicFile + '/' + alias, fs.readFileSync(filename), {}, () => {
-						return res(newArg);
+					this.client.publish(dispatcher.topicFile + '/' + alias, fs.readFileSync(filename));
+
+					this.client.on('message', (topic, message, packet) => {
+						if (topic == dispatcher.topicFileAck) {
+							if (message == alias) {
+								res(newArg);
+							}
+						}
 					});
 
 				});
