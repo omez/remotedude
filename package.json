@@ -1,0 +1,24 @@
+{
+  "name": "@omez/remotedude",
+  "description": "Remote Avrdude execution tool",
+  "version": "0.1.1",
+  "repository": "https://github.com/omez/remotedude",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "mosca": "^2.3.0",
+    "mqtt": "^2.5.0",
+    "uuid": "^3.0.1"
+  },
+  "bin": {
+    "remotedude": "./bin/client.js",
+    "remotedude-server": "./bin/server.js"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "typings": "^2.1.0"
+  }
+}

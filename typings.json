@@ -1,0 +1,10 @@
+{
+  "globalDependencies": {
+    "node": "registry:dt/node#7.0.0+20170322231424"
+  },
+  "dependencies": {
+    "commander": "registry:dt/commander#2.3.0+20161118092844",
+    "mqtt": "registry:dt/mqtt#0.0.0+20170123053929",
+    "uuid": "registry:npm/uuid#3.0.1+20161206160008"
+  }
+}
