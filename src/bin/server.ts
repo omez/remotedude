@@ -9,25 +9,29 @@ import * as commander from 'commander';
 import mosca = require('mosca');
 import { Avrdude } from '../Avrdude';
 import { MqttDispatcher, MqttDispatcherInterface } from '../MqttDispatcher';
+import * as os from 'os';
 
 const packageJson: { version: string, description: string } = require('../../package.json');
+
+const defaultAvrdude = os.type() == 'Windows_NT' ? "avrdude.exe" : 'avrdude';
 
 commander
 	.version(packageJson.version)
 	.description(packageJson.description)
 	.usage('[options]')
 	.option('-p, --port [1883]', 'Port to start server', parseInt)
-	.option('-e, --avrdude-executable [/usr/bin/avrdude]', 'Avrdude executable')
+	.option('-e, --avrdude-executable [/usr/bin/avrdude]', 'Avrdude executable', defaultAvrdude)
 	.option('-c, --avrdude-config [none]', 'Avrdude configuration file path')
 	.parse(process.argv);
 
 const options = commander.opts();
+//console.log(options);
 
 const mqttSettings = {
 	port: options.port || 1883
-}
+};
 
-const avrdude = new Avrdude(options.executable || 'avrdude', options.config);
+const avrdude = new Avrdude(options.avrdudeExecutable, options.avrdudeConfig);
 
 
 // create server

@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "commander": "registry:dt/commander#2.3.0+20161118092844",
+    "minimist": "registry:npm/minimist#1.0.0+20160723033700",
     "mqtt": "registry:dt/mqtt#0.0.0+20170123053929",
     "uuid": "registry:npm/uuid#3.0.1+20161206160008"
   }

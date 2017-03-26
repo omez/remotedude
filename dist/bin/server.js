@@ -5,20 +5,22 @@ const commander = require("commander");
 const mosca = require("mosca");
 const Avrdude_1 = require("../Avrdude");
 const MqttDispatcher_1 = require("../MqttDispatcher");
+const os = require("os");
 const packageJson = require('../../package.json');
+const defaultAvrdude = os.type() == 'Windows_NT' ? "avrdude.exe" : 'avrdude';
 commander
     .version(packageJson.version)
     .description(packageJson.description)
     .usage('[options]')
     .option('-p, --port [1883]', 'Port to start server', parseInt)
-    .option('-e, --avrdude-executable [/usr/bin/avrdude]', 'Avrdude executable')
+    .option('-e, --avrdude-executable [/usr/bin/avrdude]', 'Avrdude executable', defaultAvrdude)
     .option('-c, --avrdude-config [none]', 'Avrdude configuration file path')
     .parse(process.argv);
 const options = commander.opts();
 const mqttSettings = {
     port: options.port || 1883
 };
-const avrdude = new Avrdude_1.Avrdude(options.executable || 'avrdude', options.config);
+const avrdude = new Avrdude_1.Avrdude(options.avrdudeExecutable, options.avrdudeConfig);
 const server = new mosca.Server(mqttSettings);
 server.on('ready', () => {
     console.log(`Started remotedude server on port ${mqttSettings.port}`);

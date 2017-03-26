@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
+const util = require("util");
 exports.topicStdout = 'remotedude/stdout';
 exports.topicStderr = 'remotedude/stderr';
 exports.topicFile = 'remotedude/file';
@@ -15,6 +17,10 @@ class MqttDispatcher {
         this.avrdude = avrdude;
         this.tag = tag;
         this.publisher = publisher;
+        this.uploadDir = os.tmpdir();
+        if (!(fs.existsSync(this.uploadDir) && fs.statSync(this.uploadDir).isDirectory())) {
+            throw new Error(util.format('Upload tmp path=%s is not reachable or not a directory', this.uploadDir));
+        }
     }
     dispatch(topic, payload) {
         switch (topic) {
@@ -38,7 +44,7 @@ class MqttDispatcher {
     }
     handleFile(alias, content) {
         console.log('[%s] Handling file upload alias=%s of size=%d', this.tag, alias, content.length);
-        const filename = path.resolve(__dirname, '../files', `${this.tag}-${alias}`);
+        const filename = path.resolve(this.uploadDir, `${this.tag}-${alias}`);
         fs.writeFileSync(filename, content, {
             flag: 'w'
         });

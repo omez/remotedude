@@ -1,11 +1,16 @@
 {
-  "name": "@omez/remotedude",
+  "name": "remotedude",
   "description": "Remote Avrdude execution tool",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": "https://github.com/omez/remotedude",
   "license": "MIT",
+  "author": {
+    "name": "Alexander Sergeychik",
+    "email": "alexander.sergeychik@gmail.com"
+  },
   "dependencies": {
     "commander": "^2.9.0",
+    "minimist": "^1.2.0",
     "mosca": "^2.3.0",
     "mqtt": "^2.5.0",
     "uuid": "^3.0.1"
