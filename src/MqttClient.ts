@@ -38,9 +38,7 @@ export class MqttClient {
 					console.log('Uploading file=%s as alias=%s', filename, alias);
 					if (!fs.existsSync(filename)) throw new Error(`File '${filename}' does not exists`);
 
-					// Handle file upload
-					this.client.publish(dispatcher.topicFile + '/' + alias, fs.readFileSync(filename));
-
+					this.client.subscribe(dispatcher.topicFileAck);
 					this.client.on('message', (topic, message, packet) => {
 						if (topic == dispatcher.topicFileAck) {
 							if (message == alias) {
@@ -48,6 +46,9 @@ export class MqttClient {
 							}
 						}
 					});
+
+					// Handle file upload
+					this.client.publish(dispatcher.topicFile + '/' + alias, fs.readFileSync(filename));
 
 				});
 
