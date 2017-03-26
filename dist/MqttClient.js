@@ -4,6 +4,14 @@ const uuid = require("uuid");
 const path = require("path");
 const fs = require("fs");
 const dispatcher = require("./MqttDispatcher");
+const os = require("os");
+function normalizePath(filepath) {
+    filepath = filepath.replace('~', os.homedir());
+    if (!fs.existsSync(filepath))
+        throw new Error(`File '${filepath}' does not exists`);
+    return fs.realpathSync(filepath);
+}
+exports.normalizePath = normalizePath;
 class MqttClient {
     constructor(client) {
         this.regex = /((?:eeprom|flash):[a-z]:)(.*)((?::[a-z]))?/i;
@@ -21,9 +29,9 @@ class MqttClient {
     processUploads(args) {
         return Promise.all(args.map((arg) => {
             if (this.regex.test(arg)) {
-                const filename = this.regex.exec(arg)[2];
+                const filename = normalizePath(this.regex.exec(arg)[2]);
                 const alias = uuid.v1() + path.extname(filename);
-                const newArg = arg.replace(this.regex, '$1' + `%${alias}%` + '$2');
+                const newArg = arg.replace(this.regex, '$1' + `%${alias}%` + '$3');
                 return new Promise((res, rej) => {
                     console.log('Uploading file=%s as alias=%s', filename, alias);
                     if (!fs.existsSync(filename))

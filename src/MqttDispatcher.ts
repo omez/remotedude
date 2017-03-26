@@ -16,6 +16,10 @@ export const topicFileAck = 'remotedude/fileack';
 export const topicCommand = 'remotedude/command';
 export const topicExit = 'remotedude/exit';
 
+export const uploadDir = os.tmpdir();
+//export const uploadDir = path.resolve(__dirname, '../tmp') ;
+
+
 export interface MqttDispatcherInterface {
 	dispatch(topic, payload: Buffer|string): void;
 	terminate(): void;
@@ -26,7 +30,6 @@ export class MqttDispatcher implements MqttDispatcherInterface {
 	private readonly avrdude: AvrdudeInterface;
 	private readonly tag: string;
 	private readonly publisher: (topic, payload) => any;
-	private readonly uploadDir: string;
 
 	private bindings: {[key: string]: string} = {};
 	private files: string[] = [];
@@ -36,9 +39,8 @@ export class MqttDispatcher implements MqttDispatcherInterface {
 		this.tag = tag;
 		this.publisher = publisher;
 
-		this.uploadDir = os.tmpdir();
-		if (!(fs.existsSync(this.uploadDir) && fs.statSync(this.uploadDir).isDirectory())) {
-			throw new Error(util.format('Upload tmp path=%s is not reachable or not a directory', this.uploadDir));
+		if (!(fs.existsSync(uploadDir) && fs.statSync(uploadDir).isDirectory())) {
+			throw new Error(util.format('Upload tmp path=%s is not reachable or not a directory', uploadDir));
 		}
 	}
 
@@ -78,14 +80,12 @@ export class MqttDispatcher implements MqttDispatcherInterface {
 	 * @param alias
 	 * @param content
 	 */
-	protected handleFile(alias: string, content: Buffer | string) {
+	protected handleFile(alias: string, content: Buffer|string) {
 		console.log('[%s] Handling file upload alias=%s of size=%d', this.tag, alias, content.length);
 
-		const filename = path.resolve(this.uploadDir, `${this.tag}-${alias}`);
+		const filename = path.resolve(uploadDir, `${this.tag}-${alias}`);
 
-		fs.writeFileSync(filename, content, {
-			flag: 'w'
-		});
+		fs.writeFileSync(filename, content, { flag: 'w', encoding: null });
 
 		this.files.push(filename);
 		this.bindings[alias] = filename;

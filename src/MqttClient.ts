@@ -7,6 +7,13 @@ import * as uuid from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as dispatcher from './MqttDispatcher';
+import * as os from 'os';
+
+export function normalizePath(filepath: string): string {
+	filepath = filepath.replace('~', os.homedir());
+	if (!fs.existsSync(filepath)) throw new Error(`File '${filepath}' does not exists`);
+	return fs.realpathSync(filepath);
+}
 
 export class MqttClient {
 
@@ -30,9 +37,9 @@ export class MqttClient {
 	private processUploads(args: string[]): Promise<string[]> {
 		return Promise.all(args.map((arg: string) => {
 			if (this.regex.test(arg)) {
-				const filename = this.regex.exec(arg)[2];
+				const filename = normalizePath(this.regex.exec(arg)[2]);
 				const alias = uuid.v1() + path.extname(filename);
-				const newArg = arg.replace(this.regex, '$1' + `%${alias}%` + '$2');
+				const newArg = arg.replace(this.regex, '$1' + `%${alias}%` + '$3');
 
 				return new Promise<string>((res, rej) => {
 					console.log('Uploading file=%s as alias=%s', filename, alias);

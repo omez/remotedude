@@ -5,9 +5,10 @@
  */
 
 import * as child from 'child_process';
+import * as stream from 'stream';
 
 export type FlagsType = string[] | string;
-export type StdioCallback = (stdout, stdin)=>any;
+export type StdioCallback = (stdout: stream.Readable, stderr: stream.Readable)=>any;
 
 export interface AvrdudeInterface {
 

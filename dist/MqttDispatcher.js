@@ -10,6 +10,7 @@ exports.topicFile = 'remotedude/file';
 exports.topicFileAck = 'remotedude/fileack';
 exports.topicCommand = 'remotedude/command';
 exports.topicExit = 'remotedude/exit';
+exports.uploadDir = os.tmpdir();
 class MqttDispatcher {
     constructor(avrdude, tag, publisher) {
         this.bindings = {};
@@ -17,9 +18,8 @@ class MqttDispatcher {
         this.avrdude = avrdude;
         this.tag = tag;
         this.publisher = publisher;
-        this.uploadDir = os.tmpdir();
-        if (!(fs.existsSync(this.uploadDir) && fs.statSync(this.uploadDir).isDirectory())) {
-            throw new Error(util.format('Upload tmp path=%s is not reachable or not a directory', this.uploadDir));
+        if (!(fs.existsSync(exports.uploadDir) && fs.statSync(exports.uploadDir).isDirectory())) {
+            throw new Error(util.format('Upload tmp path=%s is not reachable or not a directory', exports.uploadDir));
         }
     }
     dispatch(topic, payload) {
@@ -44,10 +44,8 @@ class MqttDispatcher {
     }
     handleFile(alias, content) {
         console.log('[%s] Handling file upload alias=%s of size=%d', this.tag, alias, content.length);
-        const filename = path.resolve(this.uploadDir, `${this.tag}-${alias}`);
-        fs.writeFileSync(filename, content, {
-            flag: 'w'
-        });
+        const filename = path.resolve(exports.uploadDir, `${this.tag}-${alias}`);
+        fs.writeFileSync(filename, content, { flag: 'w', encoding: null });
         this.files.push(filename);
         this.bindings[alias] = filename;
         this.publisher(exports.topicFileAck, alias);
