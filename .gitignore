@@ -1,5 +1,2 @@
-/files/*
-!/files/.git*
-
 /node_modules
 /typings

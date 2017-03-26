@@ -47,23 +47,32 @@ class MqttClient {
         console.log('Processing command args: %s', JSON.stringify(args));
         const topics = [dispatcher.topicExit, dispatcher.topicStdout, dispatcher.topicStderr];
         return new Promise((res, rej) => {
-            setTimeout(() => rej('Processing timeout'), 1000);
+            let timeoutHandler;
+            function heartbeat() {
+                if (timeoutHandler)
+                    clearTimeout(timeoutHandler);
+                timeoutHandler = setTimeout(() => rej(new Error('Process execution timeout reached')), 5000);
+            }
             const subscriber = (topic, message, packet) => {
                 switch (topic) {
                     case dispatcher.topicExit:
+                        clearTimeout(timeoutHandler);
                         res(parseInt(message));
                         break;
                     case dispatcher.topicStdout:
                         process.stdout.write(message);
+                        heartbeat();
                         break;
                     case dispatcher.topicStderr:
                         process.stderr.write(message);
+                        heartbeat();
                         break;
                 }
             };
             this.client.subscribe(topics);
             this.client.on('message', subscriber);
             this.client.publish(dispatcher.topicCommand, args.join(' '));
+            heartbeat();
         });
     }
 }

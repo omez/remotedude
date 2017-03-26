@@ -18,7 +18,6 @@ const dudeOpts = Object.keys(options).filter((key) => key != '_').reduce((args, 
 const host = options._.length ? options._[0] : 'localhost:1883';
 const uri = 'mqtt://' + host;
 const client = mqtt.connect(uri);
-let args = process.argv.slice(2);
 const mqttClient = new MqttClient_1.MqttClient(client);
 new Promise((res, rej) => {
     console.log('Connecting to %s...', uri);
